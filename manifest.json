@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArB65VWDbxAfTsp+qwvo8v4EJsInOy77MzJUGHIoA7EmkQBWcwmTKpPPkBClMAlnrUCDVEigT+MuRqQ+QafQWjMfImBAwI1paHb+4XYiDjwVHMJZaywsXMd5/0Ug2gJWn4RNJyw7VyWmYfZEUcQT8J7HdH/jGMDsE3aP6Utt7HJBAw4WG8QMecNbOyjcTpLgvE9xjFuCn0apQtAd+ejLs7/OtOPy31x7VrLjNzTtBQsAlXB1Fs7oRJoUVtkW6qNDiurdhbwQHexe2H1ZjGsGyCPM7GpAI9ee/A9daYtMUkyMlk5m4RnZldLImS018VE3BirgTlcE+hjz5gZYp1LtPMwIDAQAB",
+  "name": "Personal Assistant",
+  "version": "1.0",
+  "description": "Find upcoming Google Calendar events, extract meeting information and schedule",
+  "permissions": [
+    "identity",
+    "storage",
+    "alarms",
+    "windows"
+  ],
+  "host_permissions": [
+    "https://www.googleapis.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "oauth2": {
+    "client_id": "391708637781-7udfbqlirpbci8bdf1rqas8mqome44lu.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/calendar",
+      "https://www.googleapis.com/auth/calendar.events"
+    ]
+  }
+} 

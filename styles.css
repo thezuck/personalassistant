@@ -1,0 +1,60 @@
+.container {
+  width: 400px;
+  padding: 20px;
+}
+
+.event-card {
+  border: 1px solid #ccc;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.event-time {
+  font-weight: bold;
+  margin-right: 15px;
+  min-width: 70px;
+}
+
+.event-title {
+  flex-grow: 1;
+}
+
+#error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-button:hover {
+  background-color: #f0f0f0;
+  border-radius: 50%;
+  color: #333;
+} 
+
+.no-events {
+  text-align: center;
+  color: #666;
+  padding: 20px;
+  font-style: italic;
+}
