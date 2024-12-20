@@ -1,0 +1,39 @@
+.event-list {
+  width: 100%;
+}
+
+.no-events {
+  text-align: center;
+  padding: 1rem;
+  color: #718096;
+  background: #f7fafc;
+  border-radius: 0.375rem;
+}
+
+/* Add some visual distinction for past meetings */
+.past-meetings .event-card {
+  opacity: 0.8;
+  background: #f7fafc;
+} 
+
+.scrollable-section {
+  padding-right: 8px;
+}
+
+.scrollable-section::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-section::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.scrollable-section::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.scrollable-section::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+} 

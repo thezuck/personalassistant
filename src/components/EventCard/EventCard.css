@@ -1,0 +1,77 @@
+.event-card {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 0.5rem;
+  background: white;
+  transition: all 0.2s;
+}
+
+.event-card:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.event-card.skipped {
+  background-color: #f1f5f9;
+  border: 1px dashed #cbd5e1;
+}
+
+.event-card.skipped .event-time {
+  opacity: 0.6;
+  color: #64748b;
+}
+
+.event-card.skipped .event-title {
+  opacity: 0.6;
+  color: #64748b;
+}
+
+.event-time {
+  font-weight: bold;
+  color: #4a5568;
+  white-space: nowrap;
+}
+
+.event-title {
+  margin-left: 1rem;
+  color: #2d3748;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.event-title .chakra-badge {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.event-actions {
+  margin-left: auto;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.event-actions::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -4px;
+  bottom: -4px;
+  width: 1px;
+  background: #e2e8f0;
+  opacity: 0.7;
+}
+
+/* Make sure the event details don't get squished */
+.event-card .chakra-stack {
+  min-width: 0;
+}
+
+.event-card.auto-opened {
+  border: 1px solid #68D391;  /* light green border */
+  background-color: #F0FFF4;  /* very light green background */
+} 

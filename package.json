@@ -1,0 +1,28 @@
+{
+  "name": "calendar-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@chakra-ui/react": "^2.8.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "framer-motion": "^10.15.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.10.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.242",
+    "@vitejs/plugin-react": "^4.0.4",
+    "rimraf": "^6.0.1",
+    "vite": "^4.4.9"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rimraf dist",
+    "zip": "powershell Compress-Archive -Path ./dist/* -DestinationPath ./calendar-assistant.zip -Force",
+    "build:prod": "npm run clean && npm run build && npm run zip"
+  }
+}

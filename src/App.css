@@ -1,0 +1,29 @@
+body {
+  width: 400px;
+  margin: 0;
+  background-color: #f7fafc;
+}
+
+.app-container {
+  min-height: 300px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar */
+.app-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.app-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.app-container::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.app-container::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+} 

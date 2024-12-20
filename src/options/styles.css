@@ -1,0 +1,12 @@
+body {
+  background-color: #f7fafc;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.helper-text {
+  color: #718096;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+} 
