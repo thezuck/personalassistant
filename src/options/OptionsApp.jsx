@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { Box, Container, Button, HStack, VStack, useToast } from '@chakra-ui/react';
+import { 
+  ChakraProvider,
+  Container, 
+  VStack, 
+  HStack, 
+  Button, 
+  Box,
+  Heading,
+  useToast 
+} from '@chakra-ui/react';
 import SettingsForm from '../components/SettingsForm/SettingsForm';
 
 function OptionsApp() {
@@ -33,28 +42,38 @@ function OptionsApp() {
   };
 
   return (
-    <Container maxW="container.sm" py={8}>
-      <VStack spacing={6} align="stretch">
-        <Box>
-          <SettingsForm 
-            onSettingsChange={setHasChanges}
-            onSave={setCurrentSettings}
-          />
-        </Box>
-        <HStack spacing={4} justify="flex-end">
-          <Button variant="ghost" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button 
-            colorScheme="blue" 
-            onClick={handleSave}
-            isDisabled={!hasChanges}
-          >
-            Save & Close
-          </Button>
-        </HStack>
-      </VStack>
-    </Container>
+    <ChakraProvider>
+      <Box bg="gray.50" minH="100vh">
+        <Container maxW="container.sm" py={8}>
+          <VStack spacing={6} align="stretch" bg="white" p={6} borderRadius="lg" boxShadow="sm">
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+              <Heading size="md" color="gray.700">Personal Assistant Settings</Heading>
+            </Box>
+            
+            <Box borderRadius="md" bg="white">
+              <SettingsForm 
+                onSettingsChange={setHasChanges}
+                onSave={setCurrentSettings}
+              />
+            </Box>
+
+            <HStack spacing={4} justify="flex-end" pt={4} mt={4} borderTop="1px" borderColor="gray.100">
+              <Button variant="ghost" onClick={handleCancel} size="md">
+                Cancel
+              </Button>
+              <Button 
+                colorScheme="blue" 
+                onClick={handleSave}
+                isDisabled={!hasChanges}
+                size="md"
+              >
+                Save & Close
+              </Button>
+            </HStack>
+          </VStack>
+        </Container>
+      </Box>
+    </ChakraProvider>
   );
 }
 
