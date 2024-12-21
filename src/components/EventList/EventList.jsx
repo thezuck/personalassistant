@@ -68,9 +68,12 @@ function EventList({ events, isLoading, isPaused }) {
   };
 
   const now = new Date();
-  const pastMeetings = filterEvents(events?.filter(event => 
-    new Date(event.start.dateTime || event.start.date) < now
-  ) || []).sort((a, b) => 
+  const oneHourAgo = new Date(now.getTime() - (60 * 60 * 1000)); // 1 hour ago
+
+  const pastMeetings = filterEvents(events?.filter(event => {
+    const eventTime = new Date(event.start.dateTime || event.start.date);
+    return eventTime < now && eventTime >= oneHourAgo;  // Only show meetings from last hour
+  }) || []).sort((a, b) => 
     new Date(b.start.dateTime || b.start.date) - new Date(a.start.dateTime || a.start.date)
   );
 
@@ -146,7 +149,7 @@ function EventList({ events, isLoading, isPaused }) {
             </Box>
           ) : (
             <Box p={4} textAlign="center" color="gray.500" borderRadius="md" bg="gray.50" height="60px">
-              No past meetings today
+              No past meetings in the last hour
             </Box>
           )}
         </Box>

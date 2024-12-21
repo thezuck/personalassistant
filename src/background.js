@@ -1,8 +1,11 @@
 // Handle installation and updates
 chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason === 'install') {
-    // Initialize opened meetings storage
+  console.log("onInstalled", details);
+  if (details.reason === 'install' || details.reason === 'update') {
+    // Clear opened meetings storage
     chrome.storage.local.set({ openedMeetings: [] });
+    // Set up periodic check
+    setupPeriodicCheck();
   }
 });
 
@@ -283,3 +286,73 @@ chrome.runtime.onStartup.addListener(() => {
     chrome.storage.local.set({ lastTimeZone: currentZone });
   });
 });
+
+// Setup periodic check function
+function setupPeriodicCheck() {
+  console.log("setting up periodic check");
+  // Clear any existing alarm first
+  chrome.alarms.clear('checkCalendar', () => {
+    // Create a new alarm that fires every 2 minutes
+    chrome.alarms.create('checkCalendar', {
+      periodInMinutes: 2
+    });
+    console.log("periodic check alarm created");
+  });
+}
+
+// Also set up check on startup
+chrome.runtime.onStartup.addListener(() => {
+  // Clear opened meetings on startup
+  chrome.storage.local.set({ openedMeetings: [] });
+  setupPeriodicCheck();
+});
+
+// Handle the alarm
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+  console.log("alarm triggered for checking calendar");
+  if (alarm.name === 'checkCalendar') {
+    try {
+      // Get events from calendar
+      const events = await getCalendarEvents();
+      if (events) {
+        await scheduleUpcomingMeetings(events);
+      }
+    } catch (error) {
+      console.error('Error checking calendar:', error);
+    }
+  }
+});
+
+// Function to get calendar events
+async function getCalendarEvents() {
+  try {
+    const now = new Date();
+    const endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const response = await chrome.identity.getAuthToken({ interactive: false });
+    if (!response) {
+      console.log('No auth token available');
+      return null;
+    }
+
+    const calendarResponse = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${now.toISOString()}&timeMax=${endOfDay.toISOString()}&singleEvents=true`,
+      {
+        headers: {
+          Authorization: `Bearer ${response.token}`,
+        },
+      }
+    );
+
+    if (!calendarResponse.ok) {
+      throw new Error('Failed to fetch calendar events');
+    }
+
+    const data = await calendarResponse.json();
+    return data.items;
+  } catch (error) {
+    console.error('Error fetching calendar events:', error);
+    return null;
+  }
+}
