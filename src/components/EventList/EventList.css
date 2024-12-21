@@ -1,5 +1,10 @@
 .event-list {
   width: 100%;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .no-events {
@@ -14,12 +19,21 @@
 .past-meetings .event-card {
   opacity: 0.8;
   background: #f7fafc;
-} 
-
-.scrollable-section {
-  padding-right: 8px;
 }
 
+.scrollable-section {
+  width: 100%;
+  padding-right: 8px;
+  padding-bottom: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Custom scrollbar for event sections */
 .scrollable-section::-webkit-scrollbar {
   width: 8px;
 }
@@ -27,13 +41,30 @@
 .scrollable-section::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 4px;
+  margin-bottom: 0;
 }
 
 .scrollable-section::-webkit-scrollbar-thumb {
   background: #cbd5e0;
   border-radius: 4px;
+  min-height: 40px;
 }
 
 .scrollable-section::-webkit-scrollbar-thumb:hover {
   background: #a0aec0;
+}
+
+/* Event card should just wrap content */
+.event-card {
+  width: 100%;
+}
+
+.scrollable-section > div {
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.scrollable-section > div > div:last-child {
+  margin-bottom: 0 !important;
 } 

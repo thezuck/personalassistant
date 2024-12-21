@@ -112,8 +112,6 @@ async function cleanupOldMeetings() {
 }
 
 async function scheduleUpcomingMeetings(events) {
-  console.log('Scheduling meetings:', events);
-
   // Clear existing timers
   scheduledMeetings.forEach(timerId => clearTimeout(timerId));
   scheduledMeetings.clear();
@@ -163,10 +161,17 @@ async function scheduleUpcomingMeetings(events) {
     if (timeUntilMeeting > minutesBefore * 60000) {  // More than 1 minute away
       console.log(`Scheduling meeting for ${new Date(startTime - minutesBefore * 60000)}`);
       const timerId = setTimeout(async () => {
+        // Check pause state before opening
+        const { isPaused } = await chrome.storage.sync.get({ isPaused: false });
+        if (isPaused) {
+          console.log('Extension is paused - skipping scheduled meeting open');
+          return;
+        }
+
         console.log(`Opening scheduled meeting: ${event.summary}`);
         chrome.tabs.create({ url: meetingUrl, active: true }, async (tab) => {
           chrome.windows.update(tab.windowId, { focused: true });
-          await markMeetingAsOpened(event);  // Pass entire event object
+          await markMeetingAsOpened(event);
         });
         scheduledMeetings.delete(event.id);
         await persistScheduledMeetings();
@@ -177,10 +182,17 @@ async function scheduleUpcomingMeetings(events) {
     } 
     // Only open immediately if within the 1-minute window and not already opened
     else if (timeUntilMeeting > 0 && timeUntilMeeting <= minutesBefore * 60000) {
+      // Check pause state before immediate open
+      const { isPaused } = await chrome.storage.sync.get({ isPaused: false });
+      if (isPaused) {
+        console.log('Extension is paused - skipping immediate meeting open');
+        return;
+      }
+
       console.log(`Opening immediate meeting: ${event.summary}`);
       chrome.tabs.create({ url: meetingUrl, active: true }, async (tab) => {
         chrome.windows.update(tab.windowId, { focused: true });
-        await markMeetingAsOpened(event);  // Pass entire event object
+        await markMeetingAsOpened(event);
       });
     }
   }

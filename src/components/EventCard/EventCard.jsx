@@ -137,8 +137,9 @@ function EventCard({ event }) {
 
   const startTime = event.start.dateTime
     ? new Intl.DateTimeFormat(undefined, {
-        hour: 'numeric',
+        hour: '2-digit',
         minute: '2-digit',
+        hour12: false,
         timeZone: event.start.timeZone
       }).format(new Date(event.start.dateTime))
     : 'All day';
@@ -164,32 +165,45 @@ function EventCard({ event }) {
   const meetingType = getMeetingType();
 
   const handleEventSettingsChange = async (value) => {
-    const newSettings = { autoOpenMinutes: value };
-    const data = await chrome.storage.local.get(['eventSettings']);
-    const allEventSettings = data.eventSettings || {};
-    
-    await chrome.storage.local.set({
-      eventSettings: {
-        ...allEventSettings,
-        [event.id]: newSettings
-      }
-    });
-    
-    setEventSettings(newSettings);
+    // If value is empty, NaN, or null, remove the setting to use default
+    if (!value || isNaN(value)) {
+      const data = await chrome.storage.local.get(['eventSettings']);
+      const allEventSettings = data.eventSettings || {};
+      
+      // Remove this event's settings
+      delete allEventSettings[event.id];
+      
+      await chrome.storage.local.set({
+        eventSettings: allEventSettings
+      });
+      
+      setEventSettings({ autoOpenMinutes: null });
+    } else {
+      const newSettings = { autoOpenMinutes: parseInt(value) };
+      const data = await chrome.storage.local.get(['eventSettings']);
+      const allEventSettings = data.eventSettings || {};
+      
+      await chrome.storage.local.set({
+        eventSettings: {
+          ...allEventSettings,
+          [event.id]: newSettings
+        }
+      });
+      
+      setEventSettings(newSettings);
+    }
   };
 
   return (
-    <Box 
-      className={`event-card ${isSkipped ? 'skipped' : ''} ${isAutoOpened ? 'auto-opened' : ''}`}
-    >
-      <HStack spacing={4} align="center" justify="space-between">
-        <HStack spacing={4} align="center" flex="1">
+    <Box className={`event-card ${isSkipped ? 'skipped' : ''} ${isAutoOpened ? 'auto-opened' : ''}`}>
+      <HStack spacing={4} align="center" width="100%">
+        <HStack spacing={2} flex="1" minWidth="0">
           <Text className="event-time">{startTime}</Text>
           <Text className="event-title" noOfLines={2}>
             {event.summary}
           </Text>
         </HStack>
-        <Box className="event-actions" ml={4}>
+        <Box className="event-actions">
           <HStack spacing={2}>
             {!isPast && (
               <>
@@ -209,10 +223,23 @@ function EventCard({ event }) {
                         <FormLabel fontSize="sm">Minutes before</FormLabel>
                         <NumberInput
                           size="sm"
-                          value={eventSettings.autoOpenMinutes ?? 'Default'}
-                          min={0}
+                          value={eventSettings.autoOpenMinutes === null ? '' : eventSettings.autoOpenMinutes}
+                          min={-1}
                           max={60}
-                          onChange={(value) => handleEventSettingsChange(value === 'Default' ? null : parseInt(value))}
+                          onChange={(valueString) => {
+                            if (valueString === '') {
+                              handleEventSettingsChange(null);
+                            } else {
+                              const value = parseInt(valueString);
+                              if (!isNaN(value)) {
+                                if (value < 0) {
+                                  handleEventSettingsChange(null);
+                                } else {
+                                  handleEventSettingsChange(value);
+                                }
+                              }
+                            }
+                          }}
                         >
                           <NumberInputField placeholder="Default" />
                           <NumberInputStepper>
