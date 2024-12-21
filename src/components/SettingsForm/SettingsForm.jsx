@@ -127,10 +127,13 @@ function SettingsForm({ onSettingsChange, onSave }) {
           tooltip="Set the default number of minutes before a meeting starts to automatically open the link. You can customize this per meeting using the settings (cog) icon on each meeting."
         />
         <NumberInput
-          value={settings.autoOpenMinutes}
+          value={settings.autoOpenMinutes ?? 0}
           min={0}
           max={60}
-          onChange={(value) => handleChange('autoOpenMinutes', parseInt(value))}
+          onChange={(valueString) => {
+            const value = parseInt(valueString);
+            handleChange('autoOpenMinutes', isNaN(value) ? 0 : value);
+          }}
         >
           <NumberInputField />
           <NumberInputStepper>
