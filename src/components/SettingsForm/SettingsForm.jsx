@@ -18,6 +18,11 @@ import {
   List,
   ListItem,
   IconButton,
+  Tag,
+  TagLabel,
+  TagCloseButton,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 import { FiInfo, FiX } from 'react-icons/fi';
 
@@ -140,7 +145,7 @@ function SettingsForm({ onSettingsChange, onSave }) {
           label="Meeting Filters" 
           tooltip="Only auto-open meetings whose titles match these filters (supports regex)"
         />
-        <HStack mb={2}>
+        <HStack mb={3}>
           <Input
             value={newFilter}
             onChange={(e) => setNewFilter(e.target.value)}
@@ -149,20 +154,31 @@ function SettingsForm({ onSettingsChange, onSave }) {
           />
           <Button onClick={addFilter}>Add</Button>
         </HStack>
-        <List spacing={2}>
-          {settings.meetingFilters.map((filter, index) => (
-            <ListItem key={index} display="flex" alignItems="center">
-              <Text flex="1">{filter}</Text>
-              <IconButton
-                icon={<FiX />}
-                size="sm"
-                variant="ghost"
-                onClick={() => removeFilter(index)}
-                aria-label="Remove filter"
-              />
-            </ListItem>
-          ))}
-        </List>
+        
+        {settings.meetingFilters.length > 0 ? (
+          <Wrap spacing={2}>
+            {settings.meetingFilters.map((filter, index) => (
+              <WrapItem key={index}>
+                <Tag
+                  size="md"
+                  borderRadius="full"
+                  variant="solid"
+                  colorScheme="blue"
+                >
+                  <TagLabel>{filter}</TagLabel>
+                  <TagCloseButton
+                    onClick={() => removeFilter(index)}
+                    aria-label={`Remove filter ${filter}`}
+                  />
+                </Tag>
+              </WrapItem>
+            ))}
+          </Wrap>
+        ) : (
+          <Text color="gray.500" fontSize="sm">
+            No filters added. All meetings will be auto-opened.
+          </Text>
+        )}
       </FormControl>
     </VStack>
   );
