@@ -8,23 +8,20 @@
   height: 48px;
   display: flex;
   align-items: center;
+  user-select: none;
 }
 
 .event-card:hover {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.event-card.skipped {
+.event-card:not(.past-meeting).skipped {
   background-color: #f1f5f9;
   border: 1px dashed #cbd5e1;
 }
 
-.event-card.skipped .event-time {
-  opacity: 0.6;
-  color: #64748b;
-}
-
-.event-card.skipped .event-title {
+.event-card:not(.past-meeting).skipped .event-time,
+.event-card:not(.past-meeting).skipped .event-title {
   opacity: 0.6;
   color: #64748b;
 }
@@ -64,6 +61,13 @@
   justify-content: flex-end;
   min-width: fit-content;
   flex-shrink: 0;
+  user-select: auto;
+  cursor: default;
+}
+
+.event-actions button,
+.event-actions a {
+  cursor: pointer;
 }
 
 /* Make sure the event details don't get squished */
@@ -71,7 +75,8 @@
   min-width: 0;
 }
 
-.event-card.auto-opened {
+/* Apply auto-opened styling to all auto-opened meetings (both upcoming and past) */
+.event-card:not(.skipped).auto-opened {
   border: 1px solid #68D391;  /* light green border */
   background-color: #F0FFF4;  /* very light green background */
 }
@@ -80,4 +85,9 @@
 .event-card > div {
   height: 100%;
 }
+
+/* Remove the past-meeting class and its styling */
+/* .event-card.past-meeting {
+  opacity: 0.8;
+} */
   

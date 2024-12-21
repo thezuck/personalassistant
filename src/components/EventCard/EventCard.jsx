@@ -25,19 +25,18 @@ function EventCard({ event }) {
         meeting.timeZone === event.start.timeZone
       );
 
-      // If auto-opened, also mark as skipped
+      // Set auto-opened state independently of skipped state
       if (wasAutoOpened) {
         setIsAutoOpened(true);
-        setIsSkipped(true);
-      } else {
-        // Check if manually skipped
-        const isSkipped = skippedMeetings.some(meeting => 
-          meeting.id === event.id && 
-          meeting.startTime === startTime &&
-          meeting.timeZone === event.start.timeZone
-        );
-        setIsSkipped(isSkipped);
       }
+
+      // Check if manually skipped
+      const isSkipped = skippedMeetings.some(meeting => 
+        meeting.id === event.id && 
+        meeting.startTime === startTime &&
+        meeting.timeZone === event.start.timeZone
+      );
+      setIsSkipped(isSkipped);
     });
   }, [event]);
 
@@ -83,24 +82,30 @@ function EventCard({ event }) {
       // Open the meeting
       chrome.tabs.create({ url: meetingUrl, active: true }, async (tab) => {
         chrome.windows.update(tab.windowId, { focused: true });
-      });
+        
+        // Mark as opened but don't mark as skipped
+        const data = await chrome.storage.local.get('openedMeetings');
+        const openedMeetings = data.openedMeetings || [];
+        const startTime = new Date(event.start.dateTime || event.start.date).getTime();
+        
+        const meetingKey = {
+          id: event.id,
+          startTime: startTime,
+          timeZone: event.start.timeZone,
+          summary: event.summary
+        };
 
-      // Mark as skipped
-      const data = await chrome.storage.local.get('skippedMeetings');
-      const skippedMeetings = data.skippedMeetings || [];
-      const startTime = new Date(event.start.dateTime || event.start.date).getTime();
-      
-      const meetingKey = {
-        id: event.id,
-        startTime: startTime,
-        timeZone: event.start.timeZone,
-        summary: event.summary
-      };
-
-      await chrome.storage.local.set({ 
-        skippedMeetings: [...skippedMeetings, meetingKey] 
+        if (!openedMeetings.some(m => 
+          m.id === event.id && 
+          m.startTime === startTime && 
+          m.timeZone === event.start.timeZone
+        )) {
+          await chrome.storage.local.set({ 
+            openedMeetings: [...openedMeetings, meetingKey] 
+          });
+          setIsAutoOpened(true);  // Set auto-opened state
+        }
       });
-      setIsSkipped(true);
     }
   };
 
@@ -195,7 +200,9 @@ function EventCard({ event }) {
   };
 
   return (
-    <Box className={`event-card ${isSkipped ? 'skipped' : ''} ${isAutoOpened ? 'auto-opened' : ''}`}>
+    <Box 
+      className={`event-card ${isSkipped ? 'skipped' : ''} ${isAutoOpened ? 'auto-opened' : ''} ${isPast ? 'past-meeting' : ''}`}
+    >
       <HStack spacing={4} align="center" width="100%">
         <HStack spacing={2} flex="1" minWidth="0">
           <Text className="event-time">{startTime}</Text>
@@ -205,7 +212,7 @@ function EventCard({ event }) {
         </HStack>
         <Box className="event-actions">
           <HStack spacing={2}>
-            {!isPast && (
+            {!isPast && !isAutoOpened && (
               <>
                 <Popover placement="top">
                   <PopoverTrigger>

@@ -16,10 +16,10 @@
 }
 
 /* Add some visual distinction for past meetings */
-.past-meetings .event-card {
+/* .past-meetings .event-card {
   opacity: 0.8;
   background: #f7fafc;
-}
+} */
 
 .scrollable-section {
   width: 100%;
