@@ -60,15 +60,25 @@ function SettingsForm({ onSettingsChange, onSave }) {
 
   const addFilter = () => {
     if (newFilter.trim()) {
-      const filters = [...settings.meetingFilters, newFilter.trim()];
-      handleChange('meetingFilters', filters);
-      setNewFilter('');
+      try {
+        new RegExp(newFilter.trim());
+        
+        const filters = [...settings.meetingFilters, newFilter.trim()];
+        const newSettings = { ...settings, meetingFilters: filters };
+        setSettings(newSettings);
+        onSave?.(newSettings);
+        setNewFilter('');
+      } catch (e) {
+        alert('Invalid filter pattern. Please enter a valid regular expression.');
+      }
     }
   };
 
   const removeFilter = (index) => {
     const filters = settings.meetingFilters.filter((_, i) => i !== index);
-    handleChange('meetingFilters', filters);
+    const newSettings = { ...settings, meetingFilters: filters };
+    setSettings(newSettings);
+    onSave?.(newSettings);
   };
 
   const LabelWithTooltip = ({ label, tooltip }) => (

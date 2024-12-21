@@ -112,6 +112,7 @@ async function cleanupOldMeetings() {
 }
 
 async function scheduleUpcomingMeetings(events) {
+  console.log('Scheduling upcoming meetings');
   // Clear existing timers
   scheduledMeetings.forEach(timerId => clearTimeout(timerId));
   scheduledMeetings.clear();
@@ -224,17 +225,27 @@ async function getMeetingUrl(event) {
 
   // Check if meeting title matches any filter
   if (settings.meetingFilters.length > 0) {
+    console.log('Checking filters for meeting:', event.summary);
+    console.log('Active filters:', settings.meetingFilters);
+    
     const matchesFilter = settings.meetingFilters.some(filter => {
       try {
-        const filterRegex = new RegExp(filter);
-        return filterRegex.test(event.summary);
+        const filterRegex = new RegExp(filter, 'i');  // Add 'i' flag for case-insensitive
+        const matches = filterRegex.test(event.summary);
+        console.log(`Filter "${filter}" matches "${event.summary}": ${matches}`);
+        return matches;
       } catch (e) {
+        console.error('Invalid filter regex:', filter, e);
         return false;
       }
     });
+
     if (!matchesFilter) {
+      console.log('Meeting does not match any filters, skipping');
       return null;
     }
+  } else {
+    console.log('No filters active, skipping filter check');
   }
 
   // Check for Google Meet

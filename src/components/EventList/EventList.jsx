@@ -6,16 +6,30 @@ import './EventList.css';
 function EventList({ events, isLoading, isPaused }) {
   const [settings, setSettings] = useState({
     enableZoom: true,
-    enableMeet: true
+    enableMeet: true,
+    meetingFilters: []
   });
 
   useEffect(() => {
     chrome.storage.sync.get({
       enableZoom: true,
-      enableMeet: true
+      enableMeet: true,
+      meetingFilters: []
     }, (items) => {
       setSettings(items);
     });
+
+    const handleStorageChange = (changes) => {
+      if (changes.meetingFilters) {
+        setSettings(prev => ({
+          ...prev,
+          meetingFilters: changes.meetingFilters.newValue
+        }));
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+    return () => chrome.storage.onChanged.removeListener(handleStorageChange);
   }, []);
 
   // Helper function to determine meeting type
@@ -29,13 +43,27 @@ function EventList({ events, isLoading, isPaused }) {
     return null;
   };
 
-  // Filter events based on settings
+  // Helper function to check if event matches filters
+  const matchesFilters = (event) => {
+    if (!settings.meetingFilters.length) return true;
+    
+    return settings.meetingFilters.some(filter => {
+      try {
+        const filterRegex = new RegExp(filter, 'i');
+        return filterRegex.test(event.summary);
+      } catch (e) {
+        return false;
+      }
+    });
+  };
+
+  // Filter events based on settings and filters
   const filterEvents = (eventList) => {
     return eventList.filter(event => {
       const type = getMeetingType(event);
       if (type === 'meet' && !settings.enableMeet) return false;
       if (type === 'zoom' && !settings.enableZoom) return false;
-      return true;
+      return matchesFilters(event);
     });
   };
 
